@@ -1,8 +1,21 @@
 #!/usr/bin/env ruby
 
+def indent(str)
+  puts "       #{str}"
+end
+
+def arrow(str)
+  puts "-----> #{str}"
+end
+
+arrow "Checking for private SSH keys in `SSH_KEY`"
+
 if ENV.include? 'SSH_KEY'
   puts "Private SSH Keys"
   exit 0
 else
+  puts "No SSH_KEY found in"
+  require 'pp'
+  pp ENV
   exit 1
 end
