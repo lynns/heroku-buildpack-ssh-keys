@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/local/bin/ruby
 
 require 'tmpdir'
 require 'fileutils'
@@ -30,6 +30,9 @@ Dir.mktmpdir "env_ssh" do |dir|
 
   indent `ssh-add #{dir}/env_ssh_key 2>&1`.strip.gsub(/#{dir}/, '[tmpdir]')
   ENV.delete('SSH_KEY')
+
+  arrow "Checking GitHub identity"
+  indent `ssh -T git@github.com`
 
   # Execute the real buildpack
   Dir.mktmpdir "proxy_pack" do |pack_dir|
