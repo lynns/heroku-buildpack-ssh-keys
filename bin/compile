@@ -1,0 +1,69 @@
+#!/usr/bin/env ruby
+
+require 'tmpdir'
+require 'fileutils'
+
+def indent(str)
+  puts "       #{str}"
+end
+
+def arrow(str)
+  puts "-----> #{str}"
+end
+
+arrow "Checking for a valid SSH key"
+
+Dir.mktmpdir "env_ssh" do |dir|
+  File.open("#{dir}/env_ssh_key", 'w+', 0600) do |f|
+    f.puts ENV['SSH_KEY']
+  end
+
+  `ssh-keygen -e -f #{dir}/env_ssh_key < /dev/null > #{dir}/env_ssh_key.pub.rfc 2>/dev/null`
+  `ssh-keygen -i -f #{dir}/env_ssh_key.pub.rfc > #{dir}/env_ssh_key.pub 2>/dev/null`
+  key = `ssh-keygen -l -f #{dir}/env_ssh_key.pub | awk '{print $2}' | tr -ds ':' '' | egrep -ie "[a-f0-9]{32}" 2>/dev/null`
+
+  # if key is empty, abort the build
+  if key.strip == ''
+    arrow "SSH_KEY was invalid"
+    exit 1
+  end
+
+  indent `ssh-add #{dir}/env_ssh_key 2>&1`.strip.gsub(/#{dir}/, '[tmpdir]')
+  ENV.delete('SSH_KEY')
+
+  # Execute the real buildpack
+  Dir.mktmpdir "proxy_pack" do |pack_dir|
+
+    FileUtils.rm_rf pack_dir
+
+    pack_url = ENV['PROXY_PACK'] || "https://github.com/ddollar/heroku-buildpack-multi.git"
+    url, *extra = pack_url.split '#'
+    branch = extra.join
+
+    `git clone #{url} #{pack_dir} >/dev/null 2>&1`
+    Dir.chdir pack_dir do
+
+      if branch != ''
+        `git checkout #{branch} >/dev/null 2>&1`
+      end
+
+      `chmod +x #{pack_dir}/bin/{detect,compile,release}`
+      framework = `#{pack_dir}/bin/detect #{ARGV[0]}`
+
+      if $? == 0
+        arrow "Found proxy framework #{framework}"
+
+        `#{pack_dir}/bin/compile #{ARGV[0]} #{ARGV[1]}`
+
+        if $? != 0
+          exit $?
+        end
+      else
+        indent "The proxy pack at #{pack_url} didn't think it applied to this app."
+      end
+
+    end
+
+  end
+
+end

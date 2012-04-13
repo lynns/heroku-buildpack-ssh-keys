@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+if ENV.include? 'SSH_KEY'
+  puts "Private SSH Keys"
+  exit 0
+else
+  exit 1
+end
