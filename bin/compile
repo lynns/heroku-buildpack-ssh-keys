@@ -28,11 +28,14 @@ Dir.mktmpdir "env_ssh" do |dir|
     exit 1
   end
 
-  indent `ssh-add #{dir}/env_ssh_key 2>&1`.strip.gsub(/#{dir}/, '[tmpdir]')
   ENV.delete('SSH_KEY')
+  File.open("#{dir}/git_ssh", 'w+', 0700) do |f|
+    f.puts "ssh -i #{dir}/env_ssh_key $*"
+  end
+  ENV['GIT_SSH'] = "#{dir}/git_ssh"
 
   arrow "Checking GitHub identity"
-  indent `ssh -i #{dir}/env_ssh_key -T git@github.com`
+  indent `$GIT_SSH -T git@github.com`
 
   # Execute the real buildpack
   Dir.mktmpdir "proxy_pack" do |pack_dir|
@@ -51,13 +54,15 @@ Dir.mktmpdir "env_ssh" do |dir|
         `git checkout #{branch} >/dev/null 2>&1`
       end
 
-      `chmod +x #{pack_dir}/bin/{detect,compile,release}`
-      framework = `#{pack_dir}/bin/detect #{ARGV[0]}`
+      `chmod +x ./bin/detect`
+      `chmod +x ./bin/compile`
+      `chmod +x ./bin/release`
+      framework = `./bin/detect #{ARGV[0]}`
 
       if $? == 0
         arrow "Found proxy framework #{framework}"
 
-        `#{pack_dir}/bin/compile #{ARGV[0]} #{ARGV[1]}`
+        `./bin/compile #{ARGV[0]} #{ARGV[1]}`
 
         if $? != 0
           exit $?
