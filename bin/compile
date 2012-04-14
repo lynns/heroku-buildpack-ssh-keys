@@ -32,7 +32,7 @@ Dir.mktmpdir "env_ssh" do |dir|
   ENV.delete('SSH_KEY')
 
   arrow "Checking GitHub identity"
-  indent `ssh -T git@github.com`
+  indent `ssh -i #{dir}/env_ssh_key -T git@github.com`
 
   # Execute the real buildpack
   Dir.mktmpdir "proxy_pack" do |pack_dir|
@@ -44,6 +44,7 @@ Dir.mktmpdir "env_ssh" do |dir|
     branch = extra.join
 
     `git clone #{url} #{pack_dir} >/dev/null 2>&1`
+    indent `ls #{pack_dir}`
     Dir.chdir pack_dir do
 
       if branch != ''
