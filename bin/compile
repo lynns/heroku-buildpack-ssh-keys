@@ -5,13 +5,13 @@ require 'fileutils'
 
 def indent(str)
   str.split("\n").each do |line|
-    puts "       #{str}"
+    puts "       #{line}"
   end
 end
 
 def arrow(str)
   str.split("\n").each do |line|
-    puts "-----> #{str}"
+    puts "-----> #{line}"
   end
 end
 
@@ -51,7 +51,6 @@ Dir.mktmpdir "env_ssh" do |dir|
     branch = extra.join
 
     `git clone #{url} #{pack_dir} >/dev/null 2>&1`
-    indent `ls #{pack_dir}`
     Dir.chdir pack_dir do
 
       if branch != ''
