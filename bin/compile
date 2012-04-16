@@ -49,7 +49,7 @@ Dir.mktmpdir "env_ssh" do |dir|
 
     FileUtils.rm_rf pack_dir
 
-    pack_url = ENV['PROXY_PACK'] || "https://github.com/martinrehfeld/heroku-buildpack-multi.git"
+    pack_url = ENV['PROXY_PACK'] || "https://github.com/fs-webdev/heroku-buildpack-multi.git"
     url, *extra = pack_url.split '#'
     branch = extra.join
 
