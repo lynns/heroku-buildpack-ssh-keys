@@ -1,5 +1,8 @@
 #!/usr/local/bin/ruby
 
+puts `env ruby`
+puts `/usr/local/bin/ruby -v`
+
 require 'tmpdir'
 require 'fileutils'
 
@@ -62,13 +65,13 @@ Dir.mktmpdir "env_ssh" do |dir|
       `chmod +x ./bin/release`
       framework = `./bin/detect #{ARGV[0]}`
 
-      if $? == 0
+      if $?.to_i == 0
         arrow "Found proxy framework #{framework}"
 
-        puts `./bin/compile #{ARGV[0]} #{ARGV[1]}`
+        puts `./bin/compile #{ARGV[0]} #{ARGV[1]} 2>&1`
 
-        if $? != 0
-          exit $?
+        if $?.to_i != 0
+          exit $?.to_i
         end
         
         indent "Using release configuration from proxy framework #{framework}"
