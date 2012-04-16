@@ -65,7 +65,7 @@ Dir.mktmpdir "env_ssh" do |dir|
       if $? == 0
         arrow "Found proxy framework #{framework}"
 
-        `./bin/compile #{ARGV[0]} #{ARGV[1]}`
+        puts `./bin/compile #{ARGV[0]} #{ARGV[1]}`
 
         if $? != 0
           exit $?
