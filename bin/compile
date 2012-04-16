@@ -1,8 +1,5 @@
 #!/usr/local/bin/ruby
 
-puts `env ruby`
-puts `/usr/local/bin/ruby -v`
-
 require 'tmpdir'
 require 'fileutils'
 
