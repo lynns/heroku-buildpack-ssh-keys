@@ -68,7 +68,9 @@ Dir.mktmpdir "env_ssh" do |dir|
       if $?.to_i == 0
         arrow "Found proxy framework #{framework}"
 
-        puts `./bin/compile #{ARGV[0]} #{ARGV[1]} 2>&1`
+        git_dir = ENV['GIT_DIR']
+        ENV.delete('GIT_DIR')
+        puts `./bin/compile #{ARGV[0]} #{ARGV[1]}`
         $stdout.flush
 
         status = $?
@@ -78,6 +80,7 @@ Dir.mktmpdir "env_ssh" do |dir|
           exit status.to_i
         end
         
+        ENV['GIT_DIR'] = git_dir
         indent "Using release configuration from proxy framework #{framework}"
       else
         indent "The proxy pack at #{pack_url} didn't think it applied to this app."
