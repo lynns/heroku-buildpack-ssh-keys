@@ -68,7 +68,7 @@ Dir.mktmpdir "env_ssh" do |dir|
           exit $?
         end
         
-        `./bin/release #{ARGV[0]} > #{ARGV[0]}/last_pack_release.out`
+        # `./bin/release #{ARGV[0]} > #{ARGV[0]}/last_pack_release.out`
         
         indent "Using release configuration from proxy framework #{framework}"
         indent `cat #{ARGV[0]}/last_pack_release.out`
