@@ -1,12 +1,15 @@
-#!/usr/bin/env ruby
+# #!/usr/bin/env ruby
 
-$:.unshift File.expand_path("../../lib", __FILE__)
-require "buildpack"
+# $:.unshift File.expand_path("../../lib", __FILE__)
+# require "buildpack"
 
-if pack = BuildPack.detect(ARGV.first)
-  puts pack.name
-  exit 0
-else
-  puts "no"
-  exit 1
-end
+# if pack = BuildPack.detect(ARGV.first)
+#   puts pack.name
+#   exit 0
+# else
+#   puts "no"
+#   exit 1
+# end
+
+echo "Private SSH Keys"
+exit 0
