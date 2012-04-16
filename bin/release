@@ -1,8 +1,13 @@
 #!/bin/sh
 
-if [ -f $1/last_pack_release.out ]
+if [ -f $1/failed ]
 then
-  cat $1/last_pack_release.out
+  exit 1
 else
-  echo "--- {}"
+  if [ -f $1/last_pack_release.out ]
+  then
+    cat $1/last_pack_release.out
+  else
+    echo "--- {}"
+  fi
 fi

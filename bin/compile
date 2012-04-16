@@ -69,9 +69,13 @@ Dir.mktmpdir "env_ssh" do |dir|
         arrow "Found proxy framework #{framework}"
 
         puts `./bin/compile #{ARGV[0]} #{ARGV[1]} 2>&1`
+        $stdout.flush
 
-        if $?.to_i != 0
-          exit $?.to_i
+        status = $?
+        if status.to_i != 0
+          puts "Last exit: #{status}"
+          `touch #{ARGV[0]}/failed`
+          exit status.to_i
         end
         
         indent "Using release configuration from proxy framework #{framework}"
