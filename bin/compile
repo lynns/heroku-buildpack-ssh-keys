@@ -4,11 +4,15 @@ require 'tmpdir'
 require 'fileutils'
 
 def indent(str)
-  puts "       #{str}"
+  str.split("\n").each do |line|
+    puts "       #{str}"
+  end
 end
 
 def arrow(str)
-  puts "-----> #{str}"
+  str.split("\n").each do |line|
+    puts "-----> #{str}"
+  end
 end
 
 arrow "Checking for a valid SSH key"
@@ -35,14 +39,14 @@ Dir.mktmpdir "env_ssh" do |dir|
   ENV['GIT_SSH'] = "#{dir}/git_ssh"
 
   arrow "Checking GitHub identity"
-  indent `$GIT_SSH -T git@github.com`
+  indent `$GIT_SSH -T git@github.com 2>&1`
 
   # Execute the real buildpack
   Dir.mktmpdir "proxy_pack" do |pack_dir|
 
     FileUtils.rm_rf pack_dir
 
-    pack_url = ENV['PROXY_PACK'] || "https://github.com/ddollar/heroku-buildpack-multi.git"
+    pack_url = ENV['PROXY_PACK'] || "https://github.com/martinrehfeld/heroku-buildpack-multi.git"
     url, *extra = pack_url.split '#'
     branch = extra.join
 
@@ -68,10 +72,7 @@ Dir.mktmpdir "env_ssh" do |dir|
           exit $?
         end
         
-        # `./bin/release #{ARGV[0]} > #{ARGV[0]}/last_pack_release.out`
-        
         indent "Using release configuration from proxy framework #{framework}"
-        indent `cat #{ARGV[0]}/last_pack_release.out`
       else
         indent "The proxy pack at #{pack_url} didn't think it applied to this app."
       end
