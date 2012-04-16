@@ -1,21 +1,12 @@
-#!/usr/local/bin/ruby
+#!/usr/bin/env ruby
 
-# def indent(str)
-#   puts "       #{str}"
-#   $stdout.flush
-# end
+$:.unshift File.expand_path("../../lib", __FILE__)
+require "buildpack"
 
-# def arrow(str)
-#   puts "-----> #{str}"
-#   $stdout.flush
-# end
-
-# arrow "Checking for private SSH keys in `SSH_KEY`"
-
-# if ENV.include? 'SSH_KEY'
-puts "Private SSH Keys"
-exit 0
-# else
-#   indent "No SSH_KEY found in app config. Did you set `user_env_compile` on your app with the heroku labs tool?"
-#   exit 1
-# end
+if pack = BuildPack.detect(ARGV.first)
+  puts pack.name
+  exit 0
+else
+  puts "no"
+  exit 1
+end
