@@ -34,9 +34,12 @@ Dir.mktmpdir "env_ssh" do |dir|
 
   ENV.delete('SSH_KEY')
   File.open("#{dir}/git_ssh", 'w+', 0700) do |f|
-    f.puts "ssh -i #{dir}/env_ssh_key $*"
+    f.puts "ssh -i #{dir}/env_ssh_key -o 'StrictHostKeyChecking no' $*"
   end
   ENV['GIT_SSH'] = "#{dir}/git_ssh"
+
+  arrow "Looking for github in the known_hosts"
+  indent `cat ~/.ssh/known_hosts | grep github.com`
 
   arrow "Checking GitHub identity"
   indent `$GIT_SSH -T git@github.com 2>&1`
