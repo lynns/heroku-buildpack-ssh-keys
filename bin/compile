@@ -38,6 +38,9 @@ Dir.mktmpdir "env_ssh" do |dir|
   end
   ENV['GIT_SSH'] = "#{dir}/git_ssh"
 
+  arrow "Examine my world"
+  indent `find ~`
+
   arrow "Looking for github in the known_hosts"
   indent `cat ~/.ssh/known_hosts | grep github.com`
 
