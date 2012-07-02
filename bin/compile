@@ -18,9 +18,14 @@ end
 arrow "Checking for a valid SSH key"
 
 Dir.mktmpdir "env_ssh" do |dir|
-  File.open("#{dir}/env_ssh_key", 'w+', 0600) do |f|
-    f.puts ENV['SSH_KEY']
+  if !File::exists?("#{ARGV[0]}/deploy/id_rsa")
+    arrow "Can't find the key file"
+    exit 1
   end
+
+  arrow "Copying ssh key file from repo"
+  FileUtils.cp "#{ARGV[0]}/deploy/id_rsa", "#{dir}/env_ssh_key"
+  FileUtils.chmod 0600, "#{dir}/env_ssh_key"
 
   `ssh-keygen -e -f #{dir}/env_ssh_key < /dev/null > #{dir}/env_ssh_key.pub.rfc 2>/dev/null`
   `ssh-keygen -i -f #{dir}/env_ssh_key.pub.rfc > #{dir}/env_ssh_key.pub 2>/dev/null`
